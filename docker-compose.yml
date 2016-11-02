@@ -1,0 +1,61 @@
+version: '2'
+services:
+
+  haproxy:
+    image: 'haproxy:alpine'
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - './haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro'
+      - './haproxy/certs:/certs/:ro'
+    networks:
+      yaynet:
+        aliases:
+          - 'load-balancer'
+    depends_on:
+      - 'foo1'
+      - 'foo2'
+      - 'bar1'
+      - 'bar2'
+
+  foo1:
+    image: 'nginx:alpine'
+    volumes:
+      - './foo:/usr/share/nginx/html:ro'
+    networks:
+      yaynet:
+        aliases:
+          - 'foo'
+
+  foo2:
+    image: 'nginx:alpine'
+    volumes:
+      - './foo:/usr/share/nginx/html:ro'
+    networks:
+      yaynet:
+        aliases:
+          - 'foo'
+
+
+  bar1:
+    image: 'nginx:alpine'
+    volumes:
+      - './bar:/usr/share/nginx/html:ro'
+    networks:
+      yaynet:
+        aliases:
+          - 'bar'
+
+  bar2:
+    image: 'nginx:alpine'
+    volumes:
+      - './bar:/usr/share/nginx/html:ro'
+    networks:
+      yaynet:
+        aliases:
+          - 'bar'
+
+
+networks:
+  yaynet:
